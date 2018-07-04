@@ -1,4 +1,5 @@
-String versionNo = 'Fifth Course';
+// CREATE TEST DATA WITH DEPENDENCY
+String versionNo = 'Smoke Test 2';
 
 List<FieloPLT__Program__c> programs = new List<FieloPLT__Program__c>();
 List<FieloELR__Course__c> courses = new List<FieloELR__Course__c>();
@@ -6,9 +7,9 @@ List<FieloELR__Module__c> modules = new List<FieloELR__Module__c>();
 List<FieloELR__Question__c> questions = new List<FieloELR__Question__c>();
 List<FieloELR__AnswerOption__c> answersOpList = new List<FieloELR__AnswerOption__c>();
 
-programs = [SELECT Id, Name FROM FieloPLT__Program__c WHERE Name = 'Developers Program'];
+programs = [SELECT Id, Name FROM FieloPLT__Program__c WHERE Name = 'Training Center'];
 
-courses.add(new FieloELR__Course__c( Name = 'Smoke ' + versionNo, FieloELR__Program__c = programs.get(0).Id, FieloELR__Description__c = 'Description', FieloELR__SubscriptionMode__c = 'Manual'));
+courses.add(new FieloELR__Course__c( Name = 'Course ' + versionNo, FieloELR__Program__c = programs.get(0).Id, FieloELR__Description__c = 'Description', FieloELR__SubscriptionMode__c = 'Automatic'));
 
 insert courses;
 
