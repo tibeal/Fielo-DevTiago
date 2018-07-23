@@ -1,5 +1,5 @@
 // CREATE TEST DATA WITH DEPENDENCY
-String versionNo = 'Smoke Test 2';
+String versionNo = 'Admins';
 
 List<FieloPLT__Program__c> programs = new List<FieloPLT__Program__c>();
 List<FieloELR__Course__c> courses = new List<FieloELR__Course__c>();
@@ -7,16 +7,16 @@ List<FieloELR__Module__c> modules = new List<FieloELR__Module__c>();
 List<FieloELR__Question__c> questions = new List<FieloELR__Question__c>();
 List<FieloELR__AnswerOption__c> answersOpList = new List<FieloELR__AnswerOption__c>();
 
-programs = [SELECT Id, Name FROM FieloPLT__Program__c WHERE Name = 'Training Center'];
+programs = [SELECT Id, Name FROM FieloPLT__Program__c WHERE Name = 'Developers Program'];
 
-courses.add(new FieloELR__Course__c( Name = 'Course ' + versionNo, FieloELR__Program__c = programs.get(0).Id, FieloELR__Description__c = 'Description', FieloELR__SubscriptionMode__c = 'Automatic'));
+courses.add(new FieloELR__Course__c( Name = versionNo, FieloELR__Program__c = programs.get(0).Id, FieloELR__Description__c = 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia volupta', FieloELR__SubscriptionMode__c = 'Automatic'));
 
 insert courses;
 
-modules.add(new FieloELR__Module__c(Name = '01 - Basic', FieloELR__Course__c = courses.get(0).id, FieloELR__ApprovalGrade__c = 75, FieloELR__AttemptsAllowed__c = 2, FieloELR__AttemptsAllowedPerQuestion__c = 2, FieloELR__PenaltyMode__c = 'None'));
-modules.add(new FieloELR__Module__c(Name = '02 - Advanced', FieloELR__Course__c = courses.get(0).id, FieloELR__ApprovalGrade__c = 75, FieloELR__AttemptsAllowed__c = 2, FieloELR__AttemptsAllowedPerQuestion__c = 2, FieloELR__PenaltyMode__c = 'None'));
-modules.add(new FieloELR__Module__c(Name = '03 - Final', FieloELR__Course__c = courses.get(0).id, FieloELR__ApprovalGrade__c = 75, FieloELR__AttemptsAllowed__c = 2, FieloELR__AttemptsAllowedPerQuestion__c = 2, FieloELR__PenaltyMode__c = 'None'));
-modules.add(new FieloELR__Module__c(Name = '04 - Bonus', FieloELR__Course__c = courses.get(0).id, FieloELR__ApprovalGrade__c = 75, FieloELR__AttemptsAllowed__c = 2, FieloELR__AttemptsAllowedPerQuestion__c = 2, FieloELR__PenaltyMode__c = 'None'));
+modules.add(new FieloELR__Module__c(Name = '01 - Basic', FieloELR__Course__c = courses.get(0).id, FieloELR__ApprovalGrade__c = 75, FieloELR__AttemptsAllowed__c = 2, FieloELR__AttemptsAllowedPerQuestion__c = 2, FieloELR__PenaltyMode__c = 'None', FieloELR__Description__c = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis,'));
+modules.add(new FieloELR__Module__c(Name = '02 - Advanced', FieloELR__Course__c = courses.get(0).id, FieloELR__ApprovalGrade__c = 75, FieloELR__AttemptsAllowed__c = 2, FieloELR__AttemptsAllowedPerQuestion__c = 2, FieloELR__PenaltyMode__c = 'None', FieloELR__Description__c = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis,'));
+modules.add(new FieloELR__Module__c(Name = '03 - Final', FieloELR__Course__c = courses.get(0).id, FieloELR__ApprovalGrade__c = 75, FieloELR__AttemptsAllowed__c = 2, FieloELR__AttemptsAllowedPerQuestion__c = 2, FieloELR__PenaltyMode__c = 'None', FieloELR__Description__c = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis,'));
+modules.add(new FieloELR__Module__c(Name = '04 - Bonus', FieloELR__Course__c = courses.get(0).id, FieloELR__ApprovalGrade__c = 75, FieloELR__AttemptsAllowed__c = 2, FieloELR__AttemptsAllowedPerQuestion__c = 2, FieloELR__PenaltyMode__c = 'None', FieloELR__Description__c = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis,'));
 
 insert modules;
 
