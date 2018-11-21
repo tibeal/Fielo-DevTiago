@@ -6,7 +6,7 @@ public class F_RewardingSummaryUpdateBatch implements Database.Batchable<sObject
     public F_RewardingSummaryUpdateBatch(){}
 
     public F_RewardingSummaryUpdateBatch(Set<Id> transactionIds){
-        this.transactionIds = transactionIds;
+            this.transactionIds = transactionIds;
     }
 
     public F_RewardingSummaryUpdateBatch(String whereClause){
@@ -15,26 +15,32 @@ public class F_RewardingSummaryUpdateBatch implements Database.Batchable<sObject
 
     public Database.QueryLocator start(Database.BatchableContext BC) {
 
+        String query = 'SELECT Id, FieloPLT__Member__c FROM FieloPLT__Transaction__c';
 
-        String query = 'SELECT Id, FieloPLT__RewardingSummary__c, FieloPLT__Member__c, (SELECT Id, Name, FieloPLT__Balance__c, FieloPLT__Member__c, FieloPLT__Rule__c, FieloPLT__ChallengeReward__c, FieloPLT__PointType__c, FieloPLT__Status__c, FieloPLT__Transaction__c ,FieloPLT__TotalPoints__c ,FieloPLT__UsedPoints__c FROM FieloPLT__Points__r), (SELECT Id, FieloPLT__Description__c, FieloPLT__Member__c, FieloPLT__Rule__c, FieloPLT__ChallengeReward__c, FieloPLT__Status__c, FieloPLT__Transaction__c FROM FieloPLT__Redemptions__r), (SELECT Id, Name, FieloPLT__Badge__c, FieloPLT__Rule__c, FieloPLT__ChallengeReward__c, FieloPLT__Member__c, FieloPLT__Quantity__c, FieloPLT__Status__c FROM FieloPLT__BadgesMembers__r) FROM FieloPLT__Transaction__c';
         if(transactionIds != null && !transactionIds.isEmpty()){
             query += ' WHERE Id IN: transactionIds';
         }
-        if(String.isNotBlank(whereClause)){
+
+        if(String.isNotBlank(whereClause)) {
             query += query.contains('WHERE Id IN') ? ' AND' : ' WHERE';
             query += ' (' + whereClause + ')';
         }
+
         return Database.getQueryLocator(query);
     }
 
     public void execute(Database.BatchableContext BC, List<sObject> scope) {
         Set<Id> memberIds = new Set<Id>();
         Set<Id> transactionsProcessedIds = new Set<Id>();
-        List<FieloPLT__Transaction__c> transactions = (List<FieloPLT__Transaction__c>)scope;
-        for(FieloPLT__Transaction__c t : transactions){
+        
+        for(FieloPLT__Transaction__c t : (List<FieloPLT__Transaction__c>)scope){
             memberIds.add(t.FieloPLT__Member__c);
             transactionsProcessedIds.add(t.Id);
         }
+
+        String query = 'SELECT Id, FieloPLT__RewardingSummary__c, FieloPLT__Member__c, (SELECT Id, Name, FieloPLT__Balance__c, FieloPLT__Member__c, FieloPLT__Rule__c, FieloPLT__ChallengeReward__c, FieloPLT__PointType__c, FieloPLT__Status__c, FieloPLT__Transaction__c ,FieloPLT__TotalPoints__c ,FieloPLT__UsedPoints__c FROM FieloPLT__Points__r), (SELECT Id, FieloPLT__Description__c, FieloPLT__Member__c, FieloPLT__Rule__c, FieloPLT__ChallengeReward__c, FieloPLT__Status__c, FieloPLT__Transaction__c FROM FieloPLT__Redemptions__r), (SELECT Id, Name, FieloPLT__Badge__c, FieloPLT__Rule__c, FieloPLT__ChallengeReward__c, FieloPLT__Member__c, FieloPLT__Quantity__c, FieloPLT__Status__c FROM FieloPLT__BadgesMembers__r) FROM FieloPLT__Transaction__c WHERE Id in :transactionsProcessedIds';
+
+        List<FieloPLT__Transaction__c> transactions = (List<FieloPLT__Transaction__c>) Database.query(query);
 
         Boolean hasRules = [SELECT Id FROM FieloPLT__Rule__c LIMIT 1].size() > 0 ? true : false;
 
@@ -45,7 +51,7 @@ public class F_RewardingSummaryUpdateBatch implements Database.Batchable<sObject
             String queryRules = 'SELECT ';
             for (String fieldName: ruleFieldsMap.keySet()) {
                 queryRules += ','+fieldName;
-            } 
+            }
             queryRules = queryRules.replaceFirst(',','');
             queryRules += ' FROM FieloPLT__Rule__c';
             rulesMap = new Map<Id, FieloPLT__Rule__c>( (List<FieloPLT__Rule__c>)Database.query(queryRules));
@@ -71,8 +77,8 @@ public class F_RewardingSummaryUpdateBatch implements Database.Batchable<sObject
                             aux.put( String.valueOf( pointTypesMap.get(p.FieloPLT__PointType__c).Name), p );
                             rewardingJSON.put(String.valueOf(rulesMap.get(p.FieloPLT__Rule__c).Name), aux );
                         }
-                    } else {                        
-                      //For Adjust Transactions
+                    } else {
+                        //For Adjust Transactions
                         if( rewardingJSON.containsKey( 'adjust' ) ){
                             rewardingJSON.get( 'adjust' ).put( String.valueOf( pointTypesMap.get(p.FieloPLT__PointType__c).Name), p );
                         } else {
@@ -95,7 +101,6 @@ public class F_RewardingSummaryUpdateBatch implements Database.Batchable<sObject
                             aux.put( 'badgeMember', bm );
                             rewardingJSON.put(String.valueOf(rulesMap.get(bm.FieloPLT__Rule__c).Name), aux );
                         }
-
                     }
                 }
                 
@@ -108,5 +113,5 @@ public class F_RewardingSummaryUpdateBatch implements Database.Batchable<sObject
     }
     
     public void finish(Database.BatchableContext BC) {
-    }   
+    }
 }
