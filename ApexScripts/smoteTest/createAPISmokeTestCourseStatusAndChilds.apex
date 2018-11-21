@@ -1,4 +1,4 @@
-Id courseId = 'a0j6A000001Xwj2QAC';
+Id courseId = 'a285E000000MVNGQA4';
 
 FieloELR__Course__c course = [SELECT Id, FieloELR__Program__c FROM FieloELR__Course__c WHERE Id = :courseId];
 
@@ -19,10 +19,17 @@ Map<Id, FieloELR__Question__c> questionMap = new Map<Id, FieloELR__Question__c>(
 );
 
 //Module Response
+FieloELR.ModuleService.ModuleWrapper mw;
 for (FieloELR__Module__c module: modules) {
-    FieloELR__ModuleResponse__c mr = new FieloELR__ModuleResponse__c(FieloELR__Module__c = module.Id, FieloELR__Member__c = memberId);
+    mw = FieloELR.ModuleService.takeModule(
+        module.Id,
+        memberId,
+        new Set<String> {'Id', 'FieloELR__AttemptsAllowed__c'},
+        new Set<String> {'FieloELR__QuestionText__c'},
+        new Set<String> {'FieloELR__AnswerOptionText__c','FieloELR__MatchingText__c'}
+    );
 
-    insert mr;
+    FieloELR__ModuleResponse__c mr = mw.moduleResponse;
 
     questionResponses.clear();
     for (FieloELR__Question__c q: modulesMap.get(mr.FieloELR__Module__c).FieloELR__Questions__r) {
