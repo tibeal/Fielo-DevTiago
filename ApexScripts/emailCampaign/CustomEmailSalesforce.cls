@@ -126,6 +126,7 @@ public class CustomEmailSalesforce implements FieloPLT.EmailProvidersInterface {
 					System.debug('memberValues = ' + memberValues);				
 					for(Id memberId : memberIds){
 						System.debug('memberId = ' + memberId);
+						// CUSTOMIZATION TAKES PLACE HERE - Send fromAddress to method
 						EmailResult emailResult = getMemberMessage(membersMap.get(memberId), emailTemplate, (memberValues != null ? memberValues.get(memberId) : null));
 						if (emailResult.mail != null) {
 							mails.add(emailResult.mail);
