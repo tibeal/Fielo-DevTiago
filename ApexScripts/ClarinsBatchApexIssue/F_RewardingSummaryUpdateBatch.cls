@@ -15,7 +15,7 @@ public class F_RewardingSummaryUpdateBatch implements Database.Batchable<sObject
 
     public Database.QueryLocator start(Database.BatchableContext BC) {
 
-        String query = 'SELECT Id, FieloPLT__Member__c FROM FieloPLT__Transaction__c';
+        String query = 'SELECT Id FROM FieloPLT__Transaction__c';
 
         if(transactionIds != null && !transactionIds.isEmpty()){
             query += ' WHERE Id IN: transactionIds';
@@ -30,11 +30,9 @@ public class F_RewardingSummaryUpdateBatch implements Database.Batchable<sObject
     }
 
     public void execute(Database.BatchableContext BC, List<sObject> scope) {
-        Set<Id> memberIds = new Set<Id>();
         Set<Id> transactionsProcessedIds = new Set<Id>();
         
         for(FieloPLT__Transaction__c t : (List<FieloPLT__Transaction__c>)scope){
-            memberIds.add(t.FieloPLT__Member__c);
             transactionsProcessedIds.add(t.Id);
         }
 
@@ -58,7 +56,6 @@ public class F_RewardingSummaryUpdateBatch implements Database.Batchable<sObject
         }
 
         Map<Id, FieloPLT__PointType__c> pointTypesMap = new Map<Id, FieloPLT__PointType__c>( [SELECT Id, Name FROM FieloPLT__PointType__c] );
-        Map<Id, FieloPLT__Member__c> membersMap = new Map<Id, FieloPLT__Member__c>( [SELECT Id, FieloPLT__Program__c FROM FieloPLT__Member__c WHERE Id In: memberIds]);
         
         for(FieloPLT__Transaction__c t : transactions){
             //Transaction JSON file

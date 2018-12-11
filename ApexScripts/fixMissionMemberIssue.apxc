@@ -1,0 +1,14 @@
+//los challenges "inactivos" con progreso se guardan como true en el mapa
+for(MissionMember__c missionMember: [SELECT Id, Mission__r.Challenge__c FROM MissionMember__c WHERE Mission__r.Challenge__c IN: mapChallengesWithProgress.keySet() AND Mission__r.Challenge__r.Status__c IN: inactiveStatus]){
+    mapChallengesWithProgress.put(missionMember.Mission__r.Challenge__c,true);
+}
+
+
+
+//los challenges "inactivos" con progreso se guardan como true en el mapa
+for(Mission__c mission: [SELECT Id, Challenge__c, (SELECT Id FROM ChallengeMissionsMembers__r LIMIT 1) FROM Mission__c WHERE Challenge__c IN: mapChallengesWithProgress.keySet() AND Challenge__r.Status__c IN: inactiveStatus]) {
+    if ( !mission.ChallengeMissionsMembers__r.isEmpty() ) {
+        mapChallengesWithProgress.put(mission.Challenge__c,true);
+    }
+}
+

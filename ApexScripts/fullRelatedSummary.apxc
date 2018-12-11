@@ -1,0 +1,23 @@
+Map<Id, Members.RelatedSummary> memberCaps = new Map<Id, Members.RelatedSummary>();
+
+Id capId;
+
+for (Integer i = 1; i <= 23; i++) {
+    capId = ('00000000000000000' + i).right(18);
+    memberCaps.put(capId, new Members.RelatedSummary() );
+    memberCaps.get(capId).value = 365;
+    memberCaps.get(capId).dates = new Map<Date, Integer>();
+
+    for (Integer j = 1; j <= 365; j++) {
+        memberCaps.get(capId).dates.put(
+            System.today().addDays(j*(-1)),
+            1
+        );
+    }
+}
+
+String newRelatedSummary = JSON.serialize(memberCaps);
+
+System.debug(
+    'Related Summary Length: ' + newRelatedSummary.length()
+);

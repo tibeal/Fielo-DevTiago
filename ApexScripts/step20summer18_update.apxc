@@ -1,0 +1,46 @@
+//Update the Configuration Summary field in Mission 
+Set<Id> missionIds = new Set<Id>(); 
+//Busco Missions con el campo ConfigurationSummary vacio 
+for(FieloPLT__Mission__c m : [SELECT Id, FieloPLT__ConfigurationSummary__c FROM FieloPLT__Mission__c]){ 
+    if( m.FieloPLT__ConfigurationSummary__c == null ){ 
+        missionIds.add(m.Id); 
+    } 
+} 
+//Traverse all of the ChallengeReward fields to see if they're using multiple point types 
+SObjectType challengeRewardObj = Schema.getGlobalDescribe().get('FieloPLT__ChallengeReward__c'); 
+List<String> fieldList = new List<String>{'Id','Name'}; 
+for(String s : challengeRewardObj.getDescribe().fields.getMap().keyset()){ 
+    if( s.contains('__c') ){ 
+        fieldList.add(s); 
+    } 
+} 
+String query = 'SELECT Id, FieloPLT__ConfigurationSummary__c ,(SELECT '+String.join(fieldList,',') +' FROM FieloPLT__ChallengeRewards__r ORDER BY FieloPLT__Position__c), (SELECT Id, FieloPLT__Mission__c, FieloPLT__Operator__c, FieloPLT__Order__c, FieloPLT__FieldType__c, FieloPLT__FieldName__c, FieloPLT__DateValue__c, FieloPLT__BooleanValue__c, FieloPLT__IsField__c FROM FieloPLT__MissionCriteria__r ORDER BY FieloPLT__Order__c) FROM FieloPLT__Mission__c WHERE Id In: missionIds'; 
+
+List<FieloPLT__Mission__c> missions = Database.query(query); 
+for (FieloPLT__Mission__c m : missions) { 
+    Map<String, List<SObject>> configuration = new Map<String, List<SObject>>(); 
+    Boolean addJSON = false; 
+    if( m.FieloPLT__ChallengeRewards__r.size() > 0){ 
+        addJSON = true; 
+        configuration.put('rewarding', new List<SObject>( (List<SObject>)m.FieloPLT__ChallengeRewards__r) ); 
+    } 
+    if( m.FieloPLT__MissionCriteria__r.size() > 0){ 
+        addJSON = true; 
+        configuration.put('criterias', new List<SObject>( (List<SObject>)m.FieloPLT__MissionCriteria__r) ); 
+    } 
+    if( addJSON ){ 
+        m.FieloPLT__ConfigurationSummary__c = JSON.serialize(configuration); 
+    } 
+}
+
+FieloPLT__Triggers__c orgDefaults = new FieloPLT__Triggers__c(SetupOwnerId = UserInfo.getOrganizationId(), FieloPLT__Mission__c = false );
+
+// disabling Mission Trigger
+insert orgDefaults;
+
+FieloPLT.SObjectService.enableAdminPermission(true); 
+update missions; 
+FieloPLT.SObjectService.enableAdminPermission(false);
+
+// enabling Mission Trigger
+delete orgDefaults;
