@@ -1,0 +1,55 @@
+// CHANGE ME - Begins
+String memberId = 'a0V0S00000117gHUAQ';
+// CHANGE ME - Ends
+
+public static string getInvoiceNumber() {
+    Blob b = Crypto.GenerateAESKey(128);
+    String h = EncodingUtil.ConvertTohex(b);
+    String code = h.SubString(0,8);
+    return code;
+}
+
+List<FieloPLT__Member__c> members = [SELECT Id FROM FieloPLT__Member__c WHERE Id = :memberId];
+
+List<FieloPLT__LoyaltyProduct__c> products = [SELECT Id, Name FROM FieloPLT__LoyaltyProduct__c ORDER BY Name];
+
+Map<String, FieloPLT__LoyaltyProduct__c> productMap = new Map<String, FieloPLT__LoyaltyProduct__c>();
+
+for (FieloPLT__LoyaltyProduct__c p : products) {
+    productMap.put(p.Name, p);
+}
+
+SObjectUnitOfWork uow = new SObjectUnitOfWork(new List<Schema.SobjectType>{FieloPLT__Invoice__c.SObjectType, FieloPLT__InvoiceItem__c.SObjectType});
+
+FieloPLT__Invoice__c invoice = new FieloPLT__Invoice__c();
+invoice.InvoiceNumber__c = getInvoiceNumber();
+invoice.Status__c = 'Pending for Approval';
+invoice.Date__c = System.today();
+invoice.Member__c = members[0].Id;
+invoice.Amount__c = 3000;
+uow.registerNew(invoice);
+
+List<FieloPLT__InvoiceItem__c> items = new List<FieloPLT__InvoiceItem__c>();
+
+items.add(new FieloPLT__InvoiceItem__c());
+items[0].Product__c = productMap.get('Product A').Id;
+items[0].Quantity__c = 50;
+items[0].UnitPrice__c = 10;
+items[0].TotalPrice__c = 500;
+uow.registerNew(items[0], InvoiceItem__c.Invoice__c, invoice);
+
+items.add(new FieloPLT__InvoiceItem__c());
+items[1].Product__c = productMap.get('Product B').Id;
+items[1].Quantity__c = 50;
+items[1].UnitPrice__c = 20;
+items[1].TotalPrice__c = 1000;
+uow.registerNew(items[1], InvoiceItem__c.Invoice__c, invoice);
+
+items.add(new FieloPLT__InvoiceItem__c());
+items[2].Product__c = productMap.get('Product C').Id;
+items[2].Quantity__c = 50;
+items[2].UnitPrice__c = 30;
+items[2].TotalPrice__c = 1500;
+uow.registerNew(items[2], InvoiceItem__c.Invoice__c, invoice);
+
+uow.commitWork();

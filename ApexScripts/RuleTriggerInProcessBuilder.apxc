@@ -1,0 +1,17 @@
+public without sharing class RuleEngineService {
+    
+    @InvocableMethod(label='Call Fielo Rule Trigger')
+    public static void processRecords(List<Id> objectIds){
+        if (objectIds.isEmpty()) {
+            throw new FieloPLT.FieloException('No Id was provided.');
+        } else {
+            DescribeSObjectResult objDescribe = objectIds.get(0).getSObjectType().getDescribe();
+
+            List<String> fields = new List<String>(objDescribe.fields.getMap().keySet());
+
+            List<sObject> records = Database.query('SELECT ' + String.join(fields, ',') + ' FROM ' + objDescribe.getName() );
+
+            FieloPLT.SObjectService.processRecords(records, null);
+        }
+    }
+}

@@ -1,0 +1,94 @@
+public static string getGUID() {
+    Blob b = Crypto.GenerateAESKey(128);
+    String h = EncodingUtil.ConvertTohex(b);
+    String guid = h.SubString(0,8)+ '-' + h.SubString(8,12) + '-' + h.SubString(12,16) + '-' + h.SubString(16,20) + '-' + h.substring(20);
+    return guid;
+}
+
+List<Mission__c> missions = [SELECT Id FROM Mission__c];
+List<CriterionGroup__c> criterionGroups = new List<CriterionGroup__c>();
+List<Criterion__c> criteria = new List<Criterion__c>();
+
+SObjectUnitOfWork uow = new SObjectUnitOfWork(new List<Schema.SobjectType>{Criterion__c.SObjectType, CriterionGroup__c.SObjectType});
+
+criterionGroups.add(new CriterionGroup__c());
+    criterionGroups[0].Order__c = 3;
+    criterionGroups[0].Mode__c = 'COUNT';
+    criterionGroups[0].Operator__c = 'greater or equal';
+    criterionGroups[0].Value__c = 1;
+    criterionGroups[0].LogicalExpression__c = 'ALL';
+    criterionGroups[0].RelatedList__c = 'FieloPLT__InvoiceItems__r';
+    criterionGroups[0].ExternalId__c = getGUID();
+    uow.registerNew(criterionGroups[0], CriterionGroup__c.Mission__c, missions[0]);
+
+criteria.add(new Criterion__c());
+    criteria[0].Order__c = 1;
+    criteria[0].FieldName__c = 'FieloPLT__Product__r.Name';
+    criteria[0].FieldType__c = 'Text';
+    criteria[0].Values__c = 'Product A';
+    criteria[0].Operator__c = 'equals';
+    criteria[0].ExternalId__c = getGUID();
+    uow.registerNew(criteria[0], Criterion__c.CriterionGroup__c, criterionGroups[0]);
+
+criteria.add(new Criterion__c());
+    criteria[1].Order__c = 2;
+    criteria[1].FieldName__c = 'FieloPLT__Quantity__c';
+    criteria[1].FieldType__c = 'Number';
+    criteria[1].NumberValue__c = 10;
+    criteria[1].Operator__c = 'greater or equal';
+    criteria[1].ExternalId__c = getGUID();
+    uow.registerNew(criteria[1], Criterion__c.CriterionGroup__c, criterionGroups[0]);
+
+criterionGroups.add(new CriterionGroup__c());
+    criterionGroups[1].Order__c = 4;
+    criterionGroups[1].Mode__c = 'COUNT';
+    criterionGroups[1].Operator__c = 'greater or equal';
+    criterionGroups[1].Value__c = 1;
+    criterionGroups[1].LogicalExpression__c = 'ALL';
+    criterionGroups[1].RelatedList__c = 'FieloPLT__InvoiceItems__r';
+    criterionGroups[1].ExternalId__c = getGUID();
+    uow.registerNew(criterionGroups[1], CriterionGroup__c.Mission__c, missions[0]);
+
+criteria.add(new Criterion__c());
+    criteria[2].FieldName__c = 'FieloPLT__Product__r.Name';
+    criteria[2].FieldType__c = 'Text';
+    criteria[2].Values__c = 'Product B';
+    criteria[2].Operator__c = 'equals';
+    criteria[2].ExternalId__c = getGUID();
+    uow.registerNew(criteria[2], Criterion__c.CriterionGroup__c, criterionGroups[1]);
+
+criteria.add(new Criterion__c());
+    criteria[3].FieldName__c = 'FieloPLT__Quantity__c';
+    criteria[3].FieldType__c = 'Number';
+    criteria[3].NumberValue__c = 10;
+    criteria[3].Operator__c = 'greater or equal';
+    criteria[3].ExternalId__c = getGUID();
+    uow.registerNew(criteria[3], Criterion__c.CriterionGroup__c, criterionGroups[1]);
+
+criterionGroups.add(new CriterionGroup__c());
+    criterionGroups[2].Order__c = 5;
+    criterionGroups[2].Mode__c = 'COUNT';
+    criterionGroups[2].Operator__c = 'greater or equal';
+    criterionGroups[2].Value__c = 1;
+    criterionGroups[2].LogicalExpression__c = 'ALL';
+    criterionGroups[2].RelatedList__c = 'FieloPLT__InvoiceItems__r';
+    criterionGroups[2].ExternalId__c = getGUID();
+    uow.registerNew(criterionGroups[2], CriterionGroup__c.Mission__c, missions[0]);
+
+criteria.add(new Criterion__c());
+    criteria[4].FieldName__c = 'FieloPLT__Product__r.Name';
+    criteria[4].FieldType__c = 'Text';
+    criteria[4].Values__c = 'Product C';
+    criteria[4].Operator__c = 'equals';
+    criteria[4].ExternalId__c = getGUID();
+    uow.registerNew(criteria[4], Criterion__c.CriterionGroup__c, criterionGroups[2]);
+
+criteria.add(new Criterion__c());
+    criteria[5].FieldName__c = 'FieloPLT__Quantity__c';
+    criteria[5].FieldType__c = 'Number';
+    criteria[5].NumberValue__c = 10;
+    criteria[5].Operator__c = 'greater or equal';
+    criteria[5].ExternalId__c = getGUID();
+    uow.registerNew(criteria[5], Criterion__c.CriterionGroup__c, criterionGroups[2]);
+
+uow.commitWork();

@@ -1,0 +1,7 @@
+//CHANGE ME - Begins
+Id missionId = 'a0X0S000000iJKzUAM';
+//CHANGE ME - Ends
+
+SObjectService.enableAdminPermission(true);
+update new Mission__c( Id = missionId, FieloPLT__FieldToAggregate__c = null);
+SObjectService.enableAdminPermission(false);

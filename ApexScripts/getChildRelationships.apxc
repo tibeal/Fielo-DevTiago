@@ -1,0 +1,14 @@
+DescribeSObjectResult eventDef = Schema.describeSObjects(new List<String>{'FieloPLT__Event__c'})[0];
+List<String> relationships = new List<String>();
+
+for (Schema.ChildRelationship cr : eventDef.getChildRelationships()) {
+    String childName = cr.getRelationshipName();
+    Boolean isPolimorfic = cr.getField().getDescribe().isNamePointing();
+    if( childName != null && !isPolimorfic ) {
+        relationships.add(cr.getRelationshipName());
+    }
+}
+
+System.debug(
+    JSON.serialize(relationships)
+);

@@ -1,0 +1,21 @@
+// CHANGE ME - Begins
+Boolean deleteBeforeCreate = true;
+// CHANGE ME - Ends
+
+if (deleteBeforeCreate) {
+    delete [SELECT Id FROM FieloPLT__LoyaltyProduct__c];
+}
+
+SObjectUnitOfWork uow = new SObjectUnitOfWork(new List<Schema.SobjectType>{FieloPLT__LoyaltyProduct__c.SObjectType});
+
+List<FieloPLT__LoyaltyProduct__c> products = new List<FieloPLT__LoyaltyProduct__c>();
+// ASCII for A = 65
+for(Integer i=0; i < 20; i++) {
+    products.add(new FieloPLT__LoyaltyProduct__c());
+    products[i].Name = 'Product ' + (math.floor(i/26) == 0 ? '' : String.valueOf((Integer)math.floor(i/26))) + String.fromCharArray( new List<Integer> { 65 + (Integer) math.mod(i, 26)});
+    products[i].FieloPLT__Family__c = Math.mod(i, 2) == 0 ? 'Even' : 'Odd';
+    products[i].FieloPLT__ProductCode__c = 'PRD-00' + (i + 1);
+    uow.registerNew(products[i]);
+}
+
+uow.commitWork();

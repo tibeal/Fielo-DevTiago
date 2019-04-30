@@ -1,0 +1,34 @@
+public static string getGUID() {
+    Blob b = Crypto.GenerateAESKey(128);
+    String h = EncodingUtil.ConvertTohex(b);
+    String guid = h.SubString(0,8)+ '-' + h.SubString(8,12) + '-' + h.SubString(12,16) + '-' + h.SubString(16,20) + '-' + h.substring(20);
+    return guid;
+}
+
+List<Mission__c> missions = [SELECT Id FROM Mission__c WHERE Name = 'Mission B'];
+List<CriterionGroup__c> criterionGroups = new List<CriterionGroup__c>();
+List<Criterion__c> criteria = new List<Criterion__c>();
+
+SObjectUnitOfWork uow = new SObjectUnitOfWork(new List<Schema.SobjectType>{Criterion__c.SObjectType, CriterionGroup__c.SObjectType});
+
+criterionGroups.add(new CriterionGroup__c());
+    criterionGroups[0].Order__c = 1;
+    criterionGroups[0].Mode__c = 'SUM';
+    criterionGroups[0].Operator__c = 'greater or equal';
+    criterionGroups[0].Value__c = 1000;
+    criterionGroups[0].LogicalExpression__c = 'ALL';
+    criterionGroups[0].RelatedList__c = 'FieloPLT__InvoiceItems__r';
+    criterionGroups[0].Field__c = 'FieloPLT__TotalPrice__c';
+    criterionGroups[0].ExternalId__c = getGUID();
+    uow.registerNew(criterionGroups[0], CriterionGroup__c.Mission__c, missions[0]);
+
+criteria.add(new Criterion__c());
+    criteria[0].Order__c = 1;
+    criteria[0].FieldName__c = 'FieloPLT__Product__r.FieloPLT__Family__c';
+    criteria[0].FieldType__c = 'Text';
+    criteria[0].Values__c = 'Beverages';
+    criteria[0].Operator__c = 'equals';
+    criteria[0].ExternalId__c = getGUID();
+    uow.registerNew(criteria[0], Criterion__c.CriterionGroup__c, criterionGroups[0]);
+
+uow.commitWork();
